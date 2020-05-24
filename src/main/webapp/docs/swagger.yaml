@@ -1,0 +1,369 @@
+swagger: '2.0'
+info:
+  description: "Toda la información acerca de tus series o películas favoritas a tu alcance, todo en el mismo sitio: TMDb, YouTube y Spotify." 
+  version: "1.1.0"
+  title: Entertainment Empire
+  # put the contact info for your development or API team
+  contact:
+    email: you@your-company.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    
+  
+# all paths will be relative to the basePath specified
+# basePath: /v1
+# Added by API Auto Mocking Plugin
+schemes:
+  - "https"
+host: entertainment-empire-270714.appspot.com
+basePath: /api
+# Added by API Auto Mocking Plugin
+#host: api.spotify.com
+#basePath: /v1   
+#externalDocs:
+ # url: 'https://developer.spotify.com/'
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# tags are used for organizing operations
+tags:
+- name: Películas
+  description: Información acerca de tus series o peliculas favoritas
+- name: Listas
+  description: Haz una lista con tus series o peliculas favoritas
+
+
+
+
+
+paths:
+  "/lists":
+    get:
+      tags:
+      - Listas 
+      summary: Devuelve todas las listas
+      operationId: getAllLists
+      description: Devuelve todas las listas
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: order
+        description: Ordena las listas por título
+        required: false
+        type: string
+        enum:
+        - name
+        - -name
+      - in: query
+        name: isEmpty
+        description: Filtra las listas sin películas
+        type: boolean
+        required: false
+      - in: query
+        name: q
+        description: Filtra las listas por título
+        type: string
+        required: false
+      responses:
+        200:
+          description: Listado de listas completado
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Lists'
+        400:
+          description: Bad request
+    post:
+      tags:
+      - Listas
+      summary: Crea una lista
+      operationId: addList
+      description: Crea una lista
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: list
+        description: Lista para añadir
+        schema:
+          $ref: '#/definitions/Lists'
+      responses:
+        201:
+          description: Lista creada
+          schema:
+            $ref: '#/definitions/Lists'
+        400:
+          description: Bad request
+    put:
+      tags:
+      - Listas
+      summary: Actualiza una lista
+      operationId: updateList
+      description: Actualiza una lista
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: list
+        description: Lista para actualizar
+        schema:
+          $ref: '#/definitions/Lists'
+      responses:
+        204:
+          description: Lista actualizada
+        400:
+          description: Bad request
+        404:
+          description: Lista no encontrada
+
+  /lists/{listId}:
+    get:
+      tags:
+      - Listas
+      summary: Devuelve una lista por su id
+      operationId: getListById
+      description: Devuelve una lista por su id
+      parameters:
+      - in: path
+        name: listId
+        description: Id de la lista
+        required: true
+        type: string
+      responses:
+        200:
+          description: Lista devuelta correctamente
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Lists'
+        404:
+          description: Archivo no encontrado
+    delete:
+      tags:
+      - Listas
+      summary: Borra una lista
+      operationId: removeList
+      description: Borra una lista
+      parameters:
+      - in: path
+        name: listId
+        description: Id de la lista
+        required: true
+        type: string
+      responses:
+        204:
+          description: Lista borrada
+        404:
+          description: Lista no encontrada
+
+  '/lists/{listId}/{filmId}':
+    post:
+      tags:
+      - Listas
+      summary: Añade una película a una lista
+      operationId: addFilm
+      description: Añade una película a una lista
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: listId
+        description: Id de la lista
+        required: true
+        type: string
+      - in: path
+        name: filmId
+        description: Id de la película
+        required: true
+        type: string
+      responses:
+        201:
+          description: Película añadida a la lista
+          schema:
+            $ref: '#/definitions/Lists'
+        400:
+          description: Bad request
+        404:
+          description: Lista o película no encontrada
+    delete:
+      tags:
+      - Listas
+      summary: Borra una película de una lista
+      operationId: removeFilm
+      description: Borra una película de una lista
+      parameters:
+      - in: path
+        name: listId
+        description: Id de la lista
+        required: true
+        type: string
+      - in: path
+        name: filmId
+        description: Id de la película
+        required: true
+        type: string
+      responses:
+        204:
+          description: Película eliminada de la lista
+        404:
+          description: Lista o película no encontrada
+
+  "/films":
+    get:
+      tags:
+      - Películas
+      summary: Devuelve las películas
+      operationId: getAllFilms
+      description: Devuelve las películas
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: q
+        description: Filtra las películas por nombre
+        type: string
+        required: false
+      responses:
+        200:
+          description: Listado de películas completado
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Films'
+        400:
+          description: Bad request
+    post:
+      tags:
+      - Películas
+      summary: Crea una película
+      operationId: createFilm
+      description: Crea una película
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: film
+        description: Película a crear
+        required: true
+        schema:
+          $ref: '#/definitions/Films'
+      responses:
+        201:
+          description: Película creada
+          schema:
+            $ref: '#/definitions/Films'
+        400:
+          description: Bad request
+    put:
+      tags:
+      - Películas
+      summary: Actualiza una película
+      operationId: updateFilm
+      description: Actualiza una película
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: film
+        description: Película a actualizar
+        required: true
+        schema:
+          $ref: '#/definitions/Films'
+      responses:
+        204:
+          description: Película actualizada
+        400:
+          description: Bad request
+        404:
+          description: Película no encontrada
+  
+  "/films/{filmId}":
+    get:
+      tags:
+      - Películas
+      summary: Devuelve una película por su Id
+      operationId: getFilmById
+      description: Devuelve una película por su Id
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: filmId
+        description: ID de la película
+        required: true
+        type: string
+      responses:
+        200:
+          description: Película devuelta correctamente
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Films'
+        404:
+          description: Ningún resultado
+    delete:
+      tags:
+      - Películas
+      summary: Elimina una película
+      operationId: deleteFilm
+      description: Elimina una película
+      parameters:
+      - in: path
+        name: filmId
+        description: Id de la película
+        required: true
+        type: string
+      responses:
+        204:
+          description: Película eliminada
+        404:
+          description: Película no encontrada
+  
+
+
+definitions:
+  Lists:
+    required:
+    - listId
+    - listTitle
+    properties:
+      listId:
+        type: string
+        example: "l0"
+      listTitle:
+        type: string
+        example: "Star Wars - First Trilogy"
+      listDescription:
+        type: string
+        example: "A list with the three firsts star wars' films."
+      films:
+        type: array
+        items:
+          $ref: '#/definitions/Films'
+
+  Films:
+    required:
+    - filmId
+    - filmTitle
+    properties:
+      filmId:
+        type: string
+        example: "f0"
+      filmTitle:
+        type: string
+        example: "Star Wars I - La Amenaza Fantasma"
+      synopsis:
+        type: string
+        example: "La princesa Leia, líder del movimiento rebelde que desea reinstaurar la República en la galaxia en los tiempos ominosos del Imperio, es capturada por las malévolas Fuerzas Imperiales, capitaneadas por el implacable Darth Vader, el sirviente más fiel del emperador. El intrépido Luke Skywalker, ayudado por Han Solo, capitán de la nave espacial 'El Halcón Milenario', y los androides, R2D2 y C3PO, serán los encargados de luchar contra el enemigo y rescatar a la princesa para volver a instaurar la justicia en el seno de la Galaxia."
+      url:
+        type: string
+        example: "https://www.themoviedb.org/movie/1893-star-wars-episode-i-the-phantom-menace?language=es-ES"
